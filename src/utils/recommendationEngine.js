@@ -1,5 +1,6 @@
 /**
  * Recommendation logic for Agriculture Fertilizer System
+ * Extended with multiple crop configurations.
  */
 
 export function analyzeSoilAndCrop(inputs) {
@@ -32,61 +33,228 @@ export function analyzeSoilAndCrop(inputs) {
   let organicAlternatives = ['Compost', 'Vermicompost'];
   const soilAmendments = [];
 
-  // 1. Establish ideal levels per crop
-  if (cropType === 'Cotton') {
-    targetN = 80; targetP = 40; targetK = 40;
-    waterRequirement = 'Medium';
-    bestSeason = 'Rainy/Kharif (June - October)';
-    suggestedFertilizer = soilType === 'Black soil' ? 'DAP' : 'Urea';
-    organicAlternatives = ['Farmyard manure', 'Neem cake'];
-  } else if (cropType === 'Chilli') {
-    targetN = 60; targetP = 50; targetK = 50;
-    waterRequirement = 'Medium';
-    bestSeason = 'Winter/Kharif';
-    suggestedFertilizer = 'NPK 19:19:19';
-    organicAlternatives = ['Vermicompost', 'Poultry manure'];
-  } else if (cropType === 'Tomato') {
-    targetN = 60; targetP = 60; targetK = 60;
-    waterRequirement = 'High';
-    bestSeason = 'Year-round';
-    suggestedFertilizer = 'NPK 19:19:19';
-    organicAlternatives = ['Compost', 'Bone meal'];
-  } else if (cropType === 'Sugarcane') {
-    targetN = 150; targetP = 80; targetK = 80;
-    waterRequirement = 'Very High';
-    bestSeason = 'Spring/Early Summer';
-    suggestedFertilizer = 'Urea';
-    organicAlternatives = ['Press mud compost', 'Green manure'];
-  } else if (cropType === 'Paddy') {
-    targetN = 100; targetP = 50; targetK = 50;
-    waterRequirement = 'Very High';
-    bestSeason = 'Rainy/Monsoon';
-    suggestedFertilizer = 'Urea';
-    organicAlternatives = ['Azolla', 'Blue-green algae'];
-  } else if (cropType === 'Groundnut') {
-    targetN = 25; targetP = 50; targetK = 40;
-    waterRequirement = 'Low';
-    bestSeason = 'Kharif/Rabi';
-    suggestedFertilizer = 'SSP (Single Super Phosphate)';
-    organicAlternatives = ['Gypsum with Compost', 'Rhizobium biofertilizer'];
-  } else if (cropType === 'Banana') {
-    targetN = 120; targetP = 40; targetK = 200;
-    waterRequirement = 'Very High';
-    bestSeason = 'Pre-monsoon planting';
-    suggestedFertilizer = 'Potash Fertilizers (MOP)';
-    organicAlternatives = ['Wood ash', 'Composted banana pseudostems'];
-  } else if (cropType === 'Mango') {
-    targetN = 50; targetP = 30; targetK = 60;
-    waterRequirement = 'Low';
-    bestSeason = 'Pre-monsoon (June)';
-    suggestedFertilizer = 'Compost';
-    organicAlternatives = ['Farmyard manure', 'Vermicompost'];
-  } else if (cropType === 'Grapes') {
-    targetN = 40; targetP = 40; targetK = 80;
-    waterRequirement = 'Medium';
-    bestSeason = 'Winter/Post-pruning';
-    suggestedFertilizer = 'Potash Fertilizers (MOP)';
-    organicAlternatives = ['Vermicompost', 'Fish emulsion'];
+  // Extended Crop Rules logic
+  switch (cropType) {
+    // COMMERCIAL CROPS
+    case 'Cotton':
+      targetN = 80; targetP = 40; targetK = 40;
+      waterRequirement = 'Medium';
+      bestSeason = 'Rainy/Kharif (June - October)';
+      suggestedFertilizer = soilType === 'Black soil' ? 'DAP' : 'Urea';
+      organicAlternatives = ['Farmyard manure', 'Neem cake'];
+      break;
+    case 'Sugarcane':
+      targetN = 150; targetP = 80; targetK = 80;
+      waterRequirement = 'Very High';
+      bestSeason = 'Spring/Early Summer';
+      suggestedFertilizer = 'Urea';
+      organicAlternatives = ['Press mud compost', 'Green manure', 'Trash mulching'];
+      break;
+    case 'Paddy':
+      targetN = 100; targetP = 50; targetK = 50;
+      waterRequirement = 'Very High';
+      bestSeason = 'Monsoon (Kharif)';
+      suggestedFertilizer = 'Urea';
+      organicAlternatives = ['Azolla biofertilizer', 'Sesbania green manure'];
+      break;
+    case 'Groundnut':
+      targetN = 25; targetP = 50; targetK = 40;
+      waterRequirement = 'Low';
+      bestSeason = 'Kharif/Rabi';
+      suggestedFertilizer = 'SSP (Single Super Phosphate)';
+      organicAlternatives = ['Gypsum with Farmyard manure', 'Rhizobium cultures'];
+      break;
+    case 'Maize':
+      targetN = 120; targetP = 60; targetK = 40;
+      waterRequirement = 'Medium';
+      bestSeason = 'Kharif/Rabi';
+      suggestedFertilizer = 'NPK 19:19:19';
+      organicAlternatives = ['Poultry manure', 'Compost'];
+      break;
+    case 'Ragi':
+      targetN = 60; targetP = 30; targetK = 30;
+      waterRequirement = 'Low';
+      bestSeason = 'Rainy (Kharif)';
+      suggestedFertilizer = 'DAP';
+      organicAlternatives = ['Farmyard manure', 'Vermicompost'];
+      break;
+    case 'Tobacco':
+      targetN = 40; targetP = 50; targetK = 120; // Needs low chlorine, high potassium
+      waterRequirement = 'Medium';
+      bestSeason = 'Post-monsoon';
+      suggestedFertilizer = 'Sulphate of Potash (SOP)';
+      organicAlternatives = ['Well-decomposed organic manure'];
+      break;
+    case 'Coffee':
+      targetN = 100; targetP = 80; targetK = 110;
+      waterRequirement = 'High';
+      bestSeason = 'Pre-monsoon shower showers';
+      suggestedFertilizer = 'NPK Complex (17:17:17)';
+      organicAlternatives = ['Coffee pulp compost', 'Cattle manure'];
+      break;
+    case 'Arecanut':
+      targetN = 100; targetP = 40; targetK = 140;
+      waterRequirement = 'High';
+      bestSeason = 'Post-monsoon (September - October)';
+      suggestedFertilizer = 'Potash Fertilizers (MOP)';
+      organicAlternatives = ['Green leaf mulching', 'Areca husk compost'];
+      break;
+    case 'Coconut':
+      targetN = 500; targetP = 320; targetK = 1200; // g/palm/year represented as targets
+      targetN = 90; targetP = 60; targetK = 150; // scaled for analysis
+      waterRequirement = 'High';
+      bestSeason = 'Monsoon (June - July)';
+      suggestedFertilizer = 'NPK 15:15:15 + Neem Cake';
+      organicAlternatives = ['Coir pith compost', 'Seaweed extract'];
+      break;
+
+    // VEGETABLES
+    case 'Chilli':
+      targetN = 60; targetP = 50; targetK = 50;
+      waterRequirement = 'Medium';
+      bestSeason = 'Kharif/Rabi';
+      suggestedFertilizer = 'NPK 19:19:19';
+      organicAlternatives = ['Vermicompost', 'Neem cake powder'];
+      break;
+    case 'Tomato':
+      targetN = 60; targetP = 60; targetK = 60;
+      waterRequirement = 'High';
+      bestSeason = 'Year-round';
+      suggestedFertilizer = 'NPK 19:19:19';
+      organicAlternatives = ['Bone meal', 'Compost'];
+      break;
+    case 'Brinjal':
+      targetN = 80; targetP = 60; targetK = 50;
+      waterRequirement = 'Medium';
+      bestSeason = 'Kharif/Summer';
+      suggestedFertilizer = 'Urea + DAP blend';
+      organicAlternatives = ['Vermicompost', 'Poultry manure'];
+      break;
+    case 'Onion':
+      targetN = 100; targetP = 50; targetK = 80;
+      waterRequirement = 'Medium';
+      bestSeason = 'Rabi (Winter)';
+      suggestedFertilizer = 'SSP + Potash (MOP)';
+      organicAlternatives = ['Well-rotted farmyard manure'];
+      break;
+    case 'Potato':
+      targetN = 120; targetP = 100; targetK = 120;
+      waterRequirement = 'High';
+      bestSeason = 'Winter (Rabi)';
+      suggestedFertilizer = 'NPK 10:26:26';
+      organicAlternatives = ['Compost', 'Wood ash'];
+      break;
+    case 'Lady Finger':
+      targetN = 80; targetP = 50; targetK = 50;
+      waterRequirement = 'Medium';
+      bestSeason = 'Summer/Kharif';
+      suggestedFertilizer = 'Urea';
+      organicAlternatives = ['Vermicompost', 'Leaf manure'];
+      break;
+    case 'Beans':
+      targetN = 30; targetP = 60; targetK = 45; // Legume fixates nitrogen
+      waterRequirement = 'Medium';
+      bestSeason = 'Winter/Summer';
+      suggestedFertilizer = 'DAP';
+      organicAlternatives = ['Rhizobium bio-fertilizer', 'Compost'];
+      break;
+    case 'Cucumber':
+      targetN = 50; targetP = 40; targetK = 60;
+      waterRequirement = 'High';
+      bestSeason = 'Summer';
+      suggestedFertilizer = 'NPK 19:19:19';
+      organicAlternatives = ['Vermicompost', 'Fish emulsion'];
+      break;
+    case 'Cabbage':
+      targetN = 120; targetP = 80; targetK = 80;
+      waterRequirement = 'High';
+      bestSeason = 'Winter (Rabi)';
+      suggestedFertilizer = 'Urea + DAP';
+      organicAlternatives = ['Chicken manure', 'Compost'];
+      break;
+    case 'Carrot':
+      targetN = 60; targetP = 80; targetK = 100;
+      waterRequirement = 'Medium';
+      bestSeason = 'Winter (Rabi)';
+      suggestedFertilizer = 'Potash Fertilizers (MOP)';
+      organicAlternatives = ['Compost', 'Rock phosphate'];
+      break;
+
+    // FRUITS
+    case 'Banana':
+      targetN = 120; targetP = 40; targetK = 200;
+      waterRequirement = 'Very High';
+      bestSeason = 'Pre-monsoon planting';
+      suggestedFertilizer = 'Potash Fertilizers (MOP)';
+      organicAlternatives = ['Wood ash', 'Banana pseudostem compost'];
+      break;
+    case 'Mango':
+      targetN = 50; targetP = 30; targetK = 60;
+      waterRequirement = 'Low';
+      bestSeason = 'Pre-monsoon (June)';
+      suggestedFertilizer = 'Compost';
+      organicAlternatives = ['Farmyard manure', 'Vermicompost'];
+      break;
+    case 'Grapes':
+      targetN = 40; targetP = 40; targetK = 80;
+      waterRequirement = 'Medium';
+      bestSeason = 'Winter/Post-pruning';
+      suggestedFertilizer = 'Potash Fertilizers (MOP)';
+      organicAlternatives = ['Vermicompost', 'Fish emulsion'];
+      break;
+    case 'Papaya':
+      targetN = 90; targetP = 90; targetK = 120;
+      waterRequirement = 'High';
+      bestSeason = 'Monsoon (June - July)';
+      suggestedFertilizer = 'NPK 19:19:19';
+      organicAlternatives = ['Poultry manure', 'Neem cake'];
+      break;
+    case 'Guava':
+      targetN = 60; targetP = 60; targetK = 60;
+      waterRequirement = 'Medium';
+      bestSeason = 'Pre-monsoon (June)';
+      suggestedFertilizer = 'Compost';
+      organicAlternatives = ['Farmyard manure', 'Vermicompost'];
+      break;
+    case 'Pomegranate':
+      targetN = 80; targetP = 40; targetK = 80;
+      waterRequirement = 'Low (Drip irrigation)';
+      bestSeason = 'Bahhar treatment (June/December)';
+      suggestedFertilizer = 'NPK 19:19:19';
+      organicAlternatives = ['Vermicompost', 'Sheep manure'];
+      break;
+    case 'Sapota':
+      targetN = 50; targetP = 40; targetK = 80;
+      waterRequirement = 'Low';
+      bestSeason = 'Monsoon';
+      suggestedFertilizer = 'Compost + SSP';
+      organicAlternatives = ['Farmyard manure', 'Castor cake'];
+      break;
+    case 'Orange':
+      targetN = 100; targetP = 60; targetK = 100;
+      waterRequirement = 'High';
+      bestSeason = 'Pre-monsoon';
+      suggestedFertilizer = 'NPK balanced fertilizer';
+      organicAlternatives = ['Vermicompost', 'Leaf mold'];
+      break;
+    case 'Watermelon':
+      targetN = 80; targetP = 40; targetK = 80;
+      waterRequirement = 'High';
+      bestSeason = 'Summer (December - March)';
+      suggestedFertilizer = 'Urea + Potash';
+      organicAlternatives = ['Compost', 'Poultry manure'];
+      break;
+    case 'Jackfruit':
+      targetN = 40; targetP = 30; targetK = 50;
+      waterRequirement = 'Low';
+      bestSeason = 'Monsoon';
+      suggestedFertilizer = 'Compost';
+      organicAlternatives = ['Forest leaf compost', 'Farmyard manure'];
+      break;
+
+    default:
+      targetN = 60; targetP = 50; targetK = 50;
+      suggestedFertilizer = 'NPK 19:19:19';
   }
 
   // Plant category adjustments

@@ -70,7 +70,7 @@ export default function App() {
   // Input states
   const [inputs, setInputs] = useState({
     farmerName: '',
-    location: 'Bengaluru',
+    location: 'Bengaluru Urban',
     soilType: 'Red soil',
     cropType: 'Cotton',
     plantCategory: 'Commercial crops',
@@ -80,6 +80,17 @@ export default function App() {
     ph: '6.5',
     weatherCondition: 'Sunny'
   });
+
+  // Reset cropType to matching category on category change
+  useEffect(() => {
+    const crops = getTranslatedOptions(lang).crops.filter(c => c.category === inputs.plantCategory);
+    if (crops.length > 0) {
+      setInputs(prev => ({
+        ...prev,
+        cropType: crops[0].value
+      }));
+    }
+  }, [inputs.plantCategory]);
 
   // Current recommendation
   const [result, setResult] = useState(null);
@@ -104,7 +115,7 @@ export default function App() {
 
   useEffect(() => {
     loadHistory();
-    loadWeather('Bengaluru');
+    loadWeather('Bengaluru Urban');
   }, []);
 
   // Sync inputs weather
@@ -112,8 +123,7 @@ export default function App() {
     if (weather) {
       setInputs(prev => ({
         ...prev,
-        weatherCondition: weather.condition,
-        location: weather.location
+        weatherCondition: weather.condition
       }));
     }
   }, [weather]);
@@ -135,9 +145,13 @@ export default function App() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setInputs(prev => ({ ...prev, [name]: value }));
+    if (name === 'location') {
+      loadWeather(value);
+    }
   };
 
   const handleSliderChange = (name, value) => {
+
     setInputs(prev => ({ ...prev, [name]: value.toString() }));
   };
 
@@ -437,16 +451,21 @@ export default function App() {
                         {getTranslation(lang, 'location')}
                       </label>
                       <div className="relative">
-                        <MapPin className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400" />
-                        <input 
-                          type="text" 
+                        <MapPin className="absolute left-3.5 top-3.5 w-4 h-4 text-slate-400 z-10" />
+                        <select 
                           name="location"
                           value={inputs.location}
                           onChange={handleInputChange}
-                          className={`w-full pl-10 pr-4 py-3 rounded-2xl border text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                          className={`w-full pl-10 pr-4 py-3 rounded-2xl border text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-emerald-500 appearance-none ${
                             darkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-200 text-slate-800'
                           }`}
-                        />
+                        >
+                          {karnatakaDistricts.map(d => (
+                            <option key={d.value} value={d.value}>
+                              {lang === 'kn' ? d.kn : d.en}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                   </div>
@@ -483,10 +502,13 @@ export default function App() {
                           darkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-slate-50 border-slate-200 text-slate-800'
                         }`}
                       >
-                        {options.crops.map(o => (
-                          <option key={o.value} value={o.value}>{o.label}</option>
-                        ))}
+                        {options.crops
+                          .filter(c => c.category === inputs.plantCategory)
+                          .map(o => (
+                            <option key={o.value} value={o.value}>{o.label}</option>
+                          ))}
                       </select>
+
                     </div>
 
                     <div>

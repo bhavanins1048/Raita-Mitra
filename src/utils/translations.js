@@ -8,7 +8,7 @@ export const translations = {
     chatbot: "AI Krishi Helper",
     settings: "Settings",
     farmerName: "Farmer Name",
-    location: "Location",
+    location: "Karnataka Location (District)",
     soilType: "Soil Type",
     cropType: "Crop Type",
     plantCategory: "Plant Category",
@@ -71,7 +71,7 @@ export const translations = {
     chatbot: "ಕೃಷಿ AI ಸಹಾಯಕಿ",
     settings: "ಸಂಯೋಜನೆಗಳು",
     farmerName: "ರೈತನ ಹೆಸರು",
-    location: "ಸ್ಥಳ / ಊರು",
+    location: "ಕರ್ನಾಟಕದ ಸ್ಥಳ (ಜಿಲ್ಲೆ)",
     soilType: "ಮಣ್ಣಿನ ವಿಧ",
     cropType: "ಬೆಳೆಯ ವಿಧ",
     plantCategory: "ಸಸ್ಯದ ವರ್ಗ",
@@ -126,9 +126,46 @@ export const translations = {
     current: "ಪ್ರಸ್ತುತ ಮಟ್ಟ"
   }
 };
+
 export const getTranslation = (lang, key) => {
   return translations[lang]?.[key] || translations['en']?.[key] || key;
 };
+
+// Comprehensive list of all 31 districts in Karnataka
+export const karnatakaDistricts = [
+  { value: 'Bagalkot', en: 'Bagalkot', kn: 'ಬಾಗಲಕೋಟೆ' },
+  { value: 'Ballari', en: 'Ballari (Bellary)', kn: 'ಬಳ್ಳಾರಿ' },
+  { value: 'Belagavi', en: 'Belagavi (Belgaum)', kn: 'ಬೆಳಗಾವಿ' },
+  { value: 'Bengaluru Rural', en: 'Bengaluru Rural', kn: 'ಬೆಂಗಳೂರು ಗ್ರಾಮಾಂತರ' },
+  { value: 'Bengaluru Urban', en: 'Bengaluru Urban', kn: 'ಬೆಂಗಳೂರು ನಗರ' },
+  { value: 'Bidar', en: 'Bidar', kn: 'ಬೀದರ್' },
+  { value: 'Chamarajanagar', en: 'Chamarajanagar', kn: 'ಚಾಮರಾಜನಗರ' },
+  { value: 'Chikkaballapur', en: 'Chikkaballapur', kn: 'ಚಿಕ್ಕಬಳ್ಳಾಪುರ' },
+  { value: 'Chikkamagaluru', en: 'Chikkamagaluru', kn: 'ಚಿಕ್ಕಮಗಳೂರು' },
+  { value: 'Chitradurga', en: 'Chitradurga', kn: 'ಚಿತ್ರದುರ್ಗ' },
+  { value: 'Dakshina Kannada', en: 'Dakshina Kannada', kn: 'ದಕ್ಷಿಣ ಕನ್ನಡ' },
+  { value: 'Davanagere', en: 'Davanagere', kn: 'ದಾವಣಗೆರೆ' },
+  { value: 'Dharwad', en: 'Dharwad', kn: 'ಧಾರವಾಡ' },
+  { value: 'Gadag', en: 'Gadag', kn: 'ಗದಗ' },
+  { value: 'Hassan', en: 'Hassan', kn: 'ಹಾಸನ' },
+  { value: 'Haveri', en: 'Haveri', kn: 'ಹಾವೇರಿ' },
+  { value: 'Kalaburagi', en: 'Kalaburagi (Gulbarga)', kn: 'ಕಲಬುರಗಿ' },
+  { value: 'Kodagu', en: 'Kodagu (Coorg)', kn: 'ಕೊಡಗು' },
+  { value: 'Kolar', en: 'Kolar', kn: 'ಕೋಲಾರ' },
+  { value: 'Koppal', en: 'Koppal', kn: 'ಕೊಪ್ಪಳ' },
+  { value: 'Mandya', en: 'Mandya', kn: 'ಮಂಡ್ಯ' },
+  { value: 'Mysuru', en: 'Mysuru (Mysore)', kn: 'ಮೈಸೂರು' },
+  { value: 'Raichur', en: 'Raichur', kn: 'ರಾಯಚೂರು' },
+  { value: 'Ramanagara', en: 'Ramanagara', kn: 'ರಾಮನಗರ' },
+  { value: 'Shivamogga', en: 'Shivamogga (Shimoga)', kn: 'ಶಿವಮೊಗ್ಗ' },
+  { value: 'Tumakuru', en: 'Tumakuru (Tumkur)', kn: 'ತುಮಕೂರು' },
+  { value: 'Udupi', en: 'Udupi', kn: 'ಉಡುಪಿ' },
+  { value: 'Uttara Kannada', en: 'Uttara Kannada', kn: 'ಉತ್ತರ ಕನ್ನಡ' },
+  { value: 'Vijayapura', en: 'Vijayapura (Bijapur)', kn: 'ವಿಜಯಪುರ' },
+  { value: 'Yadgir', en: 'Yadgir', kn: 'ಯಾದಗಿರಿ' },
+  { value: 'Vijayanagara', en: 'Vijayanagara', kn: 'ವಿಜಯನಗರ' }
+];
+
 export const getTranslatedOptions = (lang) => {
   return {
     soils: [
@@ -143,15 +180,41 @@ export const getTranslatedOptions = (lang) => {
       { value: 'Commercial crops', label: getTranslation(lang, 'commercialCrops') }
     ],
     crops: [
-      { value: 'Cotton', label: lang === 'kn' ? 'ಹತ್ತಿ (Cotton)' : 'Cotton' },
-      { value: 'Chilli', label: lang === 'kn' ? 'ಮೆಣಸಿನಕಾಯಿ (Chilli)' : 'Chilli' },
-      { value: 'Tomato', label: lang === 'kn' ? 'ಟೊಮೆಟೊ (Tomato)' : 'Tomato' },
-      { value: 'Sugarcane', label: lang === 'kn' ? 'ಕಬ್ಬು (Sugarcane)' : 'Sugarcane' },
-      { value: 'Paddy', label: lang === 'kn' ? 'ಭತ್ತ (Paddy)' : 'Paddy' },
-      { value: 'Groundnut', label: lang === 'kn' ? 'ನೆಲಗಡಲೆ (Groundnut)' : 'Groundnut' },
-      { value: 'Banana', label: lang === 'kn' ? 'ಬಾಳೆಹಣ್ಣು (Banana)' : 'Banana' },
-      { value: 'Mango', label: lang === 'kn' ? 'ಮಾವಿನಹಣ್ಣು (Mango)' : 'Mango' },
-      { value: 'Grapes', label: lang === 'kn' ? 'ದ್ರಾಕ್ಷಿ (Grapes)' : 'Grapes' }
+      // Commercial crops
+      { value: 'Cotton', label: lang === 'kn' ? 'ಹತ್ತಿ (Cotton)' : 'Cotton', category: 'Commercial crops' },
+      { value: 'Sugarcane', label: lang === 'kn' ? 'ಕಬ್ಬು (Sugarcane)' : 'Sugarcane', category: 'Commercial crops' },
+      { value: 'Paddy', label: lang === 'kn' ? 'ಭತ್ತ (Paddy)' : 'Paddy', category: 'Commercial crops' },
+      { value: 'Groundnut', label: lang === 'kn' ? 'ನೆಲಗಡಲೆ (Groundnut)' : 'Groundnut', category: 'Commercial crops' },
+      { value: 'Maize', label: lang === 'kn' ? 'ಮೆಕ್ಕೆಜೋಳ (Maize)' : 'Maize', category: 'Commercial crops' },
+      { value: 'Ragi', label: lang === 'kn' ? 'ರಾಗಿ (Ragi)' : 'Ragi', category: 'Commercial crops' },
+      { value: 'Tobacco', label: lang === 'kn' ? 'ತಂಬಾಕು (Tobacco)' : 'Tobacco', category: 'Commercial crops' },
+      { value: 'Coffee', label: lang === 'kn' ? 'ಕಾಫಿ (Coffee)' : 'Coffee', category: 'Commercial crops' },
+      { value: 'Arecanut', label: lang === 'kn' ? 'ಅಡಿಕೆ (Arecanut)' : 'Arecanut', category: 'Commercial crops' },
+      { value: 'Coconut', label: lang === 'kn' ? 'ತೆಂಗಿನಕಾಯಿ (Coconut)' : 'Coconut', category: 'Commercial crops' },
+
+      // Vegetables
+      { value: 'Chilli', label: lang === 'kn' ? 'ಮೆಣಸಿನಕಾಯಿ (Chilli)' : 'Chilli', category: 'Vegetable plants' },
+      { value: 'Tomato', label: lang === 'kn' ? 'ಟೊಮೆಟೊ (Tomato)' : 'Tomato', category: 'Vegetable plants' },
+      { value: 'Brinjal', label: lang === 'kn' ? 'ಬದನೆಕಾಯಿ (Brinjal)' : 'Brinjal', category: 'Vegetable plants' },
+      { value: 'Onion', label: lang === 'kn' ? 'ಈರುಳ್ಳಿ (Onion)' : 'Onion', category: 'Vegetable plants' },
+      { value: 'Potato', label: lang === 'kn' ? 'ಆಲೂಗಡ್ಡೆ (Potato)' : 'Potato', category: 'Vegetable plants' },
+      { value: 'Lady Finger', label: lang === 'kn' ? 'ಬೆಂಡೆಕಾಯಿ (Okra/Lady Finger)' : 'Lady Finger', category: 'Vegetable plants' },
+      { value: 'Beans', label: lang === 'kn' ? 'ಹುರುಳಿಕಾಯಿ (Beans)' : 'Beans', category: 'Vegetable plants' },
+      { value: 'Cucumber', label: lang === 'kn' ? 'ಸೌತೆಕಾಯಿ (Cucumber)' : 'Cucumber', category: 'Vegetable plants' },
+      { value: 'Cabbage', label: lang === 'kn' ? 'ಕೋಸು (Cabbage)' : 'Cabbage', category: 'Vegetable plants' },
+      { value: 'Carrot', label: lang === 'kn' ? 'ಕ್ಯಾರೆಟ್ (Carrot)' : 'Carrot', category: 'Vegetable plants' },
+
+      // Fruits
+      { value: 'Banana', label: lang === 'kn' ? 'ಬಾಳೆಹಣ್ಣು (Banana)' : 'Banana', category: 'Fruit plants' },
+      { value: 'Mango', label: lang === 'kn' ? 'ಮಾವಿನಹಣ್ಣು (Mango)' : 'Mango', category: 'Fruit plants' },
+      { value: 'Grapes', label: lang === 'kn' ? 'ದ್ರಾಕ್ಷಿ (Grapes)' : 'Grapes', category: 'Fruit plants' },
+      { value: 'Papaya', label: lang === 'kn' ? 'ಪಪ್ಪಾಯಿ (Papaya)' : 'Papaya', category: 'Fruit plants' },
+      { value: 'Guava', label: lang === 'kn' ? 'ಸೀಬೆಹಣ್ಣು (Guava)' : 'Guava', category: 'Fruit plants' },
+      { value: 'Pomegranate', label: lang === 'kn' ? 'ದಾಳಿಂಬೆ (Pomegranate)' : 'Pomegranate', category: 'Fruit plants' },
+      { value: 'Sapota', label: lang === 'kn' ? 'ಚಿಕ್ಕು / ಸಪೋಟ (Sapota)' : 'Sapota', category: 'Fruit plants' },
+      { value: 'Orange', label: lang === 'kn' ? 'ಕಿತ್ತಳೆ (Orange)' : 'Orange', category: 'Fruit plants' },
+      { value: 'Watermelon', label: lang === 'kn' ? 'ಕಲ್ಲಂಗಡಿ (Watermelon)' : 'Watermelon', category: 'Fruit plants' },
+      { value: 'Jackfruit', label: lang === 'kn' ? 'ಹಲಸಿನಹಣ್ಣು (Jackfruit)' : 'Jackfruit', category: 'Fruit plants' }
     ],
     weathers: [
       { value: 'Sunny', label: getTranslation(lang, 'sunny') },
