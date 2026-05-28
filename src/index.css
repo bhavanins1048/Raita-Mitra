@@ -14,7 +14,195 @@
   --color-primary-950: #052e16;
 }
 
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
 body {
   margin: 0;
-  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #86efac; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #22c55e; }
+
+/* ===== Keyframes ===== */
+@keyframes leaf-sway {
+  0%, 100% { transform: rotate(-4deg) scale(1); }
+  50% { transform: rotate(4deg) scale(1.03); }
+}
+@keyframes scanner-beam {
+  0% { top: 2%; opacity: 0.9; }
+  48% { opacity: 0.9; }
+  50% { top: 92%; opacity: 0.9; }
+  52% { opacity: 0; }
+  100% { top: 2%; opacity: 0; }
+}
+@keyframes bloom {
+  0% { transform: scale(0) rotate(-30deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+@keyframes pulse-ring {
+  0% { transform: scale(0.85); opacity: 1; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes grow-bar {
+  from { width: 0%; }
+  to { width: var(--target-width); }
+}
+@keyframes wilt {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-5deg); }
+}
+@keyframes thrive {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.04) rotate(1deg); }
+}
+
+/* ===== Animation Classes ===== */
+.animate-leaf-sway { animation: leaf-sway 3.5s ease-in-out infinite; }
+.animate-scanner { animation: scanner-beam 2.2s ease-in-out infinite; }
+.animate-bloom { animation: bloom 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+.animate-pulse-ring { animation: pulse-ring 1.6s ease-out infinite; }
+.animate-fadeSlideUp { animation: fadeSlideUp 0.45s ease-out forwards; }
+.animate-spin-slow { animation: spin-slow 5s linear infinite; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-wilt { animation: wilt 2.5s ease-in-out infinite; }
+.animate-thrive { animation: thrive 2s ease-in-out infinite; }
+
+/* ===== Range Input ===== */
+input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 99px;
+  outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: #16a34a;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(22,163,74,0.45);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.25); }
+
+/* ===== Select ===== */
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 38px !important;
+}
+
+/* ===== Scan overlay ===== */
+.scan-beam {
+  position: absolute;
+  left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #4ade80, #22d3ee, #4ade80, transparent);
+  box-shadow: 0 0 12px #22d3ee, 0 0 24px #4ade80;
+  border-radius: 99px;
+  animation: scanner-beam 2.2s ease-in-out infinite;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* ===== Soil layers ===== */
+.soil-layer-red {
+  background: linear-gradient(180deg, #fca5a5 0%, #ef4444 18%, #dc2626 36%, #b91c1c 55%, #7f1d1d 74%, #450a0a 100%);
+}
+.soil-layer-black {
+  background: linear-gradient(180deg, #374151 0%, #1f2937 20%, #111827 40%, #0d1117 60%, #030712 80%, #000000 100%);
+}
+.soil-layer-sandy {
+  background: linear-gradient(180deg, #fef3c7 0%, #fde68a 20%, #fcd34d 40%, #f59e0b 60%, #d97706 80%, #92400e 100%);
+}
+.soil-layer-clay {
+  background: linear-gradient(180deg, #d1d5db 0%, #9ca3af 20%, #6b7280 40%, #4b5563 60%, #374151 80%, #1f2937 100%);
+}
+
+/* ===== Immersive Slideshow Background & Ken Burns Animation ===== */
+.slideshow-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  user-select: none;
+}
+
+.slide-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-wrapper.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.slide-wrapper.active .slide-image {
+  animation: ken-burns 8s ease-out forwards;
+}
+
+.slide-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.82) contrast(1.02);
+}
+
+@keyframes ken-burns {
+  from {
+    transform: scale(1.07);
+  }
+  to {
+    transform: scale(1.0);
+  }
+}
+
+/* ===== Custom Scrollbar refinement ===== */
+::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.45);
+  border-radius: 99px;
+  backdrop-filter: blur(4px);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.8);
+}
+

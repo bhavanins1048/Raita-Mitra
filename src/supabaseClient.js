@@ -1,9 +1,63 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://ljaxkpfpivcdkxqyxmvb.supabase.co'
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_sb2dd2gIemtOiOjpEcYx8A_DIwzjPk5'
+const defaultUrl = import.meta.env.VITE_SUPABASE_URL || 'https://ljaxkpfpivcdkxqyxmvb.supabase.co';
+const defaultKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxqYXhrcGZwaXZjZGt4cXl4bXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MTQ3NDksImV4cCI6MjA5NTE5MDc0OX0.1Vp2bkFwgoK6K2DpkJyp7i7ICQYhr_EKlt8q8XNYOYQ';
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+let currentUrl = localStorage.getItem('agri_supabase_url') || defaultUrl;
+let currentKey = localStorage.getItem('agri_supabase_key') || defaultKey;
+
+export let supabase = createClient(currentUrl, currentKey);
+
+// Helper to enforce a timeout on supabase promises to prevent hanging connections
+const promiseWithTimeout = (promise, ms = 1500) => {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Database connection timeout')), ms))
+  ]);
+};
+
+export const updateSupabaseClient = (url, key) => {
+  try {
+    supabase = createClient(url, key);
+    localStorage.setItem('agri_supabase_url', url);
+    localStorage.setItem('agri_supabase_key', key);
+    return true;
+  } catch (e) {
+    console.error("Failed to update Supabase Client:", e);
+    return false;
+  }
+};
+
+export const resetSupabaseClient = () => {
+  localStorage.removeItem('agri_supabase_url');
+  localStorage.removeItem('agri_supabase_key');
+  supabase = createClient(defaultUrl, defaultKey);
+  return { url: defaultUrl, key: defaultKey };
+};
+
+export const getSupabaseConfig = () => {
+  return {
+    url: localStorage.getItem('agri_supabase_url') || defaultUrl,
+    key: localStorage.getItem('agri_supabase_key') || defaultKey,
+    isCustom: !!localStorage.getItem('agri_supabase_url')
+  };
+};
+
+export const testConnection = async (url, key) => {
+  try {
+    const tempClient = createClient(url, key);
+    // Attempt to query fertilizers table with a timeout
+    const { data, error } = await promiseWithTimeout(
+      tempClient.from('fertilizers').select('id').limit(1),
+      3000
+    );
+    if (error) throw error;
+    return { success: true };
+  } catch (e) {
+    console.warn("Connection test failed:", e);
+    return { success: false, error: e.message || 'Connection timeout or invalid credentials' };
+  }
+};
 
 // In case the tables do not exist or we get RLS/permission issues, we define a fallback LocalStorageDB system
 const MOCK_FERTILIZERS = [
@@ -118,7 +172,10 @@ export const setLocalStorageData = (key, val) => {
 export const dbService = {
   async getFertilizers() {
     try {
-      const { data, error } = await supabase.from('fertilizers').select('*');
+      const { data, error } = await promiseWithTimeout(
+        supabase.from('fertilizers').select('*'),
+        1500
+      );
       if (error || !data || data.length === 0) throw new Error(error?.message || "No data");
       return data;
     } catch (err) {
@@ -135,28 +192,34 @@ export const dbService = {
   async saveRecommendation(recommendation) {
     try {
       // 1. Insert Farmer
-      const { data: farmerData, error: fError } = await supabase
-        .from('farmers')
-        .insert([{ name: recommendation.farmerName, location: recommendation.location }])
-        .select()
-        .single();
+      const { data: farmerData, error: fError } = await promiseWithTimeout(
+        supabase
+          .from('farmers')
+          .insert([{ name: recommendation.farmerName, location: recommendation.location }])
+          .select()
+          .single(),
+        2500
+      );
       
       if (fError) throw fError;
 
       // 2. Insert Soil Report
-      const { data: soilData, error: sError } = await supabase
-        .from('soil_reports')
-        .insert([{
-          farmer_id: farmerData.id,
-          soil_type: recommendation.soilType,
-          nitrogen: recommendation.nitrogen,
-          phosphorus: recommendation.phosphorus,
-          potassium: recommendation.potassium,
-          ph: recommendation.ph,
-          moisture: recommendation.moisture || 40
-        }])
-        .select()
-        .single();
+      const { data: soilData, error: sError } = await promiseWithTimeout(
+        supabase
+          .from('soil_reports')
+          .insert([{
+            farmer_id: farmerData.id,
+            soil_type: recommendation.soilType,
+            nitrogen: recommendation.nitrogen,
+            phosphorus: recommendation.phosphorus,
+            potassium: recommendation.potassium,
+            ph: recommendation.ph,
+            moisture: recommendation.moisture || 40
+          }])
+          .select()
+          .single(),
+        2500
+      );
 
       if (sError) throw sError;
 
@@ -166,17 +229,20 @@ export const dbService = {
       const fertilizerId = fert ? fert.id : null;
 
       // 4. Save Recommendation
-      const { data: recData, error: rError } = await supabase
-        .from('recommendations')
-        .insert([{
-          farmer_id: farmerData.id,
-          soil_report_id: soilData.id,
-          crop_name: recommendation.cropType,
-          fertilizer_id: fertilizerId,
-          recommendation_result: recommendation
-        }])
-        .select()
-        .single();
+      const { data: recData, error: rError } = await promiseWithTimeout(
+        supabase
+          .from('recommendations')
+          .insert([{
+            farmer_id: farmerData.id,
+            soil_report_id: soilData.id,
+            crop_name: recommendation.cropType,
+            fertilizer_id: fertilizerId,
+            recommendation_result: recommendation
+          }])
+          .select()
+          .single(),
+        2500
+      );
 
       if (rError) throw rError;
       return recData;
@@ -209,10 +275,13 @@ export const dbService = {
 
   async getRecommendationHistory() {
     try {
-      const { data, error } = await supabase
-        .from('recommendations')
-        .select('*, farmers(*), soil_reports(*), fertilizers(*)')
-        .order('created_at', { ascending: false });
+      const { data, error } = await promiseWithTimeout(
+        supabase
+          .from('recommendations')
+          .select('*, farmers(*), soil_reports(*), fertilizers(*)')
+          .order('created_at', { ascending: false }),
+        1500
+      );
 
       if (error) throw error;
       return data.map(item => ({

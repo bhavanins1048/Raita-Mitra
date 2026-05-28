@@ -1,6 +1,6 @@
 export const translations = {
   en: {
-    title: "Agri-Smart Fertilizer System",
+    title: "Raita Mitra",
     subtitle: "Empowering farmers with intelligent soil insights",
     farmerForm: "Farmer Input Form",
     dashboard: "Dashboard",
@@ -63,7 +63,7 @@ export const translations = {
     current: "Current Level"
   },
   kn: {
-    title: "ಕೃಷಿ-ಸ್ಮಾರ್ಟ್ ರಸಗೊಬ್ಬರ ಶಿಫಾರಸು",
+    title: "ರೈತ ಮಿತ್ರ",
     subtitle: "ಬುದ್ಧಿವಂತ ಮಣ್ಣಿನ ಒಳನೋಟಗಳೊಂದಿಗೆ ರೈತರ ಸಬಲೀಕರಣ",
     farmerForm: "ರೈತರ ಮಾಹಿತಿ ಫಾರ್ಮ್",
     dashboard: "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
