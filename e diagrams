@@ -1,0 +1,126 @@
+# Raita Mitra Fertilizer Recommendation System - System & Database Diagrams
+
+This document outlines the Database Schema (Entity-Relationship Diagram) and the Application Architecture Flow for the website.
+
+---
+
+## 1. Architectural Graphic Illustration
+
+Here is a visual overview highlighting the core entities (Farmers, Soil Reports, Recommendations, and Fertilizers) and database connection paths.
+
+![Architectural Concept Diagram](C:/Users/Mala Mp/.gemini/antigravity-ide/brain/dde7b37b-73f5-47ac-8e60-2a5f5da3ca98/agricultural_architecture_illustration_1780581051770.png)
+
+---
+
+## 2. Entity-Relationship (ER) Diagram
+
+The database is built on PostgreSQL via Supabase, with tables defined in [supabase_setup.sql](file:///c:/Users/Mala Mp/Desktop/agri/supabase_setup.sql). Below is the ER diagram representing tables and their relationships.
+
+```mermaid
+erDiagram
+    FARMERS ||--o{ SOIL_REPORTS : "submits"
+    FARMERS ||--o{ RECOMMENDATIONS : "receives"
+    SOIL_REPORTS ||--o{ RECOMMENDATIONS : "generates"
+    FERTILIZERS ||--o{ RECOMMENDATIONS : "is recommended in"
+
+    FARMERS {
+        uuid id PK "Primary Key (Auto-generated UUID)"
+        string name "Farmer Name"
+        string location "Farmer Location"
+        timestamptz created_at "Timestamp of creation"
+    }
+
+    SOIL_REPORTS {
+        uuid id PK "Primary Key (Auto-generated UUID)"
+        uuid farmer_id FK "References farmers(id) (ON DELETE CASCADE)"
+        string soil_type "Type of Soil (e.g. Red, Black, Sandy)"
+        numeric nitrogen "Nitrogen levels (N)"
+        numeric phosphorus "Phosphorus levels (P)"
+        numeric potassium "Potassium levels (K)"
+        numeric ph "Soil pH level"
+        numeric moisture "Soil moisture percentage"
+        timestamptz created_at "Timestamp of report submission"
+    }
+
+    FERTILIZERS {
+        string id PK "Unique ID (e.g., 'f1', 'f2')"
+        string fertilizer_name "Name of Fertilizer (e.g., Urea, DAP)"
+        string_array suitable_soil "Array of compatible soils"
+        string_array suitable_crop "Array of compatible crops"
+        string quantity_per_acre "Recommended quantity"
+        string water_requirement "Water level needs (Low/Medium/High)"
+        string best_season "Optimal application season"
+        string_array organic_alternatives "List of eco-friendly alternatives"
+        numeric suitability_score "Scoring weight"
+        timestamptz created_at "Timestamp of catalog creation"
+    }
+
+    RECOMMENDATIONS {
+        uuid id PK "Primary Key (Auto-generated UUID)"
+        uuid farmer_id FK "References farmers(id) (ON DELETE CASCADE)"
+        uuid soil_report_id FK "References soil_reports(id) (ON DELETE CASCADE)"
+        string crop_name "Target Crop chosen by farmer"
+        string fertilizer_id FK "References fertilizers(id) (ON DELETE SET NULL)"
+        jsonb recommendation_result "Structured JSON containing recommendations & plans"
+        timestamptz created_at "Timestamp of generation"
+    }
+```
+
+---
+
+## 3. System Architecture & Data Flow
+
+This flowchart describes the frontend structure of the React app and how the data is processed, analyzed, and persisted.
+
+```mermaid
+flowchart TD
+    subgraph Client [React Frontend App]
+        UI[App.jsx / User Interface]
+        Lang[translations.js - English & Kannada translations]
+        Chat[chatbotEngine.js - Chatbot Q&A System]
+        RecEng[recommendationEngine.js - Fertilizer Matching Rules]
+    end
+
+    subgraph Backend [Supabase Backend]
+        SupaClient[supabaseClient.js - API Communication]
+        Auth[Row-Level Security / RLS policies]
+        DB[(PostgreSQL Database)]
+    end
+
+    %% Client Interactions
+    UI -->|1. Enters soil metrics & crop choice| RecEng
+    UI -->|Ask questions| Chat
+    Chat -->|Return dynamic chatbot replies| UI
+
+    %% Algorithm Flow
+    RecEng -->|2. Computes recommendations & matches| UI
+    RecEng -->|3. Resolves Fertilizer specs| SupaClient
+
+    %% Database Writes
+    UI -->|4. Transmits farmer, soil report, and result| SupaClient
+    SupaClient -->|5. Performs CRUD inserts/queries| Auth
+    Auth -->|6. Stores records safely| DB
+
+    %% Database Tables mapping
+    subgraph SQL_Tables [DB Tables in supabase_setup.sql]
+        tbl_farmers[(farmers)]
+        tbl_soil_reports[(soil_reports)]
+        tbl_recommendations[(recommendations)]
+        tbl_fertilizers[(fertilizers)]
+    end
+
+    DB --- tbl_farmers
+    DB --- tbl_soil_reports
+    DB --- tbl_recommendations
+    DB --- tbl_fertilizers
+```
+
+---
+
+## 4. Key Components and Files
+
+- **Database Definition**: [supabase_setup.sql](file:///c:/Users/Mala Mp/Desktop/agri/supabase_setup.sql) specifies the PostgreSQL tables, foreign key constraints, default values, mock data inserts, and Row-Level Security policies.
+- **Supabase Integration**: [supabaseClient.js](file:///c:/Users/Mala Mp/Desktop/agri/src/supabaseClient.js) configures connection variables to push/pull records from the cloud.
+- **Matching Rules**: [recommendationEngine.js](file:///c:/Users/Mala Mp/Desktop/agri/src/utils/recommendationEngine.js) handles logic to calculate soil health indicators and recommends appropriate organic/chemical fertilizers.
+- **Multilingual Support**: [translations.js](file:///c:/Users/Mala Mp/Desktop/agri/src/utils/translations.js) holds translations for English and Kannada (Raita Mitra features).
+- **Core View Layer**: [App.jsx](file:///c:/Users/Mala Mp/Desktop/agri/src/App.jsx) is the visual container linking forms, charts, reports, and the Chatbot interface.

@@ -1708,7 +1708,7 @@ export default function App() {
               {/* Chart B: Polar Radar Chart */}
               <div className={`${cardCls} p-6`}>
                 <h3 className="text-base font-extrabold mb-4">{getTranslation(lang, 'idealNutrients')} (Radar View)</h3>
-                <div className="h-80 flex justify-center">
+                <div className="h-80 w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarChartData}>
                       <PolarGrid stroke={darkMode ? "#334155" : "#cbd5e1"} />
